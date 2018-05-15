@@ -12,61 +12,35 @@ class App extends Component {
             sides: '',
             mod: '',
             tableData: [
-                { rank: 1, name: "Satoshi", score: 21 },
-                { rank: 2, name: "Elise", score: 17 }
-            ]
+                { rank: 1, name: "Satoshi", score: 21, id: 1 },
+                { rank: 2, name: "Elise", score: 17, id: 2 }
+            ],
+            idCounter: 2
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleRoll = this.handleRoll.bind(this);
         this.sortInitiative = this.sortInitiative.bind(this);
         this.handleInsertRow = this.handleInsertRow.bind(this);
         this.handleDeleteRow = this.handleDeleteRow.bind(this);
+        this.handleInit = this.handleInit.bind(this);
+        this.sortRank = this.sortRank.bind(this);
     }
 
     handleInsertRow(row) {
         console.log("handling insert row");
-        console.log(row);
 
         let newRow = {};
-        newRow.rank = Number(row.rank);
+        newRow.rank = ;
         newRow.name = row.name;
         newRow.score = Number(row.score);
 
         this.setState({
-            tableData: [...this.state.tableData, newRow]
-        }, console.log(this.state.tableData));
-        /*
-        this.setState(prevState => ({
-            tableData: [...prevState.tableData, row]
-        }), this.sortInitiative());
-        */
+            tableData: [...this.state.tableData, newRow],
+        }, () => this.sortInitiative());
     }
 
     handleDeleteRow(rowKeys) {
-        /*
-        let data = this.state.tableData;
-        let init;
-        rowKeys.forEach((key) => {
-            init = data.map((item) => {
-                if (item.rank === key) data.splice(data.indexOf(item), 1);
-            });
-        });
 
-        this.setState({ tableData: init });
-
-        /*
-        rowKeys.forEach((key) => {
-        data.map((item) => {
-        if (item.rank === key) {
-        data.splice(data.indexOf(item), 1);
-        }
-        });
-        })
-        data.map((item) => {
-        if (item.rank === element)
-        })
-        */
-        alert('You deleted: ' + rowKeys);
     }
 
     sortInitiative() {
@@ -77,9 +51,29 @@ class App extends Component {
             return {
                 tableData: prevState.tableData
                 .sort((a, b) => parseInt(b.score) - parseInt(a.score))
-                //.map((item) => item.rank = prevState.tableData.indexOf(item) + 1)
             }
-        }, console.log(this.state.tableData));
+        }, () => this.sortRank());
+    }
+
+    sortRank() {
+        this.setState((prevState) => {
+            console.log('sortRank prevState:');
+            console.log(prevState);
+
+            let newTableData = prevState.tableData.map((item, index) => {
+                let newRow = {};
+                newRow.rank = index+1;
+                newRow.name = item.name;
+                newRow.score = item.score;
+                return newRow;
+            })
+            console.log("newTableData:");
+            console.log(newTableData);
+
+            return {
+                tableData: newTableData
+            }
+        })
     }
 
     handleChange(target) {
@@ -93,6 +87,12 @@ class App extends Component {
         alert(`Result: ${rollResult}`);
     }
 
+    handleInit() {
+        let diceRoll = new DiceRoll(this.state.count, this.state.sides, this.state.mod);
+        const rollResult = diceRoll.roll();
+        this.handleInsertRow({ name: 'player', score: rollResult });
+    }
+
     render() {
         return (
             <div className="App">
@@ -103,15 +103,12 @@ class App extends Component {
                 <RollForm
                     onChange={this.handleChange}
                     onRollClick={this.handleRoll}
+                    onInitClick={this.handleInit}
                     />
                 <div>
                     <p className="Table-header">Initiative Table</p>
                 </div>
-                <InitiativeTable
-                    data={this.state.tableData}
-                    onInsertRow={this.handleInsertRow}
-                    onDeleteRow={this.handleDeleteRow}
-                    />
+                <InitiativeTable data={this.state.tableData} />
             </div>
         );
     }
@@ -122,6 +119,7 @@ class RollForm extends Component {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleRollClick = this.handleRollClick.bind(this);
+        this.handleInitClick = this.handleInitClick.bind(this);
     }
 
     handleChange(event) {
@@ -130,6 +128,10 @@ class RollForm extends Component {
 
     handleRollClick() {
         this.props.onRollClick();
+    }
+
+    handleInitClick() {
+        this.props.onInitClick();
     }
 
     render() {
@@ -143,6 +145,7 @@ class RollForm extends Component {
                     <label>+</label>
                     <input type="number" name="mod" onChange={this.handleChange} />
                     <input type="button" onClick={this.handleRollClick} value="Roll!" />
+                    <input type="button" onClick={this.handleInitClick} value="Roll initiative!" />
                 </form>
             </div>
         );
@@ -153,8 +156,8 @@ export default App;
 
 /*
 function sortAndRank(data) {
-    data.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-    return data.map((item) => item.rank = data.indexOf(item) + 1);
+data.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+return data.map((item) => item.rank = data.indexOf(item) + 1);
 }
 
 /*

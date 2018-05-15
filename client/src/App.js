@@ -12,8 +12,8 @@ class App extends Component {
             sides: '',
             mod: '',
             tableData: [
-                { rank: 1, name: "Satoshi", score: 21, id: 1 },
-                { rank: 2, name: "Elise", score: 17, id: 2 }
+                { rank: 1, name: "Satoshi", score: 21},
+                { rank: 2, name: "Elise", score: 17}
             ],
             idCounter: 2
         };

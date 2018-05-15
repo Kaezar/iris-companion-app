@@ -19,7 +19,7 @@ class InitiativeTable extends Component {
         let body = this.props.data.map((rowData) => {
             let row = [];
             for(let key in rowData) {
-                if(rowData.hasOwnProperty(key) && key !== 'id') {
+                if(rowData.hasOwnProperty(key)) {
                     row.push(<td>{rowData[key]}</td>);
                 }
                 return <tr>{row}</tr>

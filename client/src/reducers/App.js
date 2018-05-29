@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import InitiativeTable from './components/InitiativeTable.js';
-import logo from './logo.svg';
-import './App.css';
-import DiceRoll from './DiceRoll.js';
+import logo from '../logo.svg';
+import '../App.css';
+import DiceRoll from '../DiceRoll.js';
 
 class App extends Component {
     constructor(props) {
@@ -14,8 +13,7 @@ class App extends Component {
             tableData: [
                 { rank: 1, name: "Satoshi", score: 21},
                 { rank: 2, name: "Elise", score: 17}
-            ],
-            idCounter: 2
+            ]
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleRoll = this.handleRoll.bind(this);
@@ -30,7 +28,7 @@ class App extends Component {
         console.log("handling insert row");
 
         let newRow = {};
-        newRow.rank = ;
+        newRow.rank = 0;
         newRow.name = row.name;
         newRow.score = Number(row.score);
 
@@ -113,7 +111,7 @@ class App extends Component {
         );
     }
 }
-
+/*
 class RollForm extends Component {
     constructor(props) {
         super(props);
@@ -150,6 +148,57 @@ class RollForm extends Component {
             </div>
         );
     }
+}
+*/
+
+const RollForm = ({onChange, onRollClick, onInitClick}) => {
+
+    const handleChange = event => { onChange(event.target) };
+
+    return(
+        <div>
+            <form>
+                <label>Roll </label>
+                <input type="number" name="count" onChange={handleChange} min="1" max="infinity" required />
+                <label>d</label>
+                <input type="number" name="sides" onChange={handleChange} min="1" max="infinity" required />
+                <label>+</label>
+                <input type="number" name="mod" onChange={handleChange} />
+                <input type="button" onClick={onRollClick} value="Roll!" />
+                <input type="button" onClick={onInitClick} value="Roll initiative!" />
+            </form>
+        </div>
+    );
+}
+
+const InitiativeTable = ({data}) => {
+
+    let body = data.map((rowData) => {
+        let row = [];
+        for(let key in rowData) {
+            if(rowData.hasOwnProperty(key)) {
+                row.push(<td>{rowData[key]}</td>);
+            }
+        }
+        return <tr>{row}</tr>
+    });
+
+    return(
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {body}
+                </tbody>
+            </table>
+        </div>
+    );
 }
 
 export default App;
